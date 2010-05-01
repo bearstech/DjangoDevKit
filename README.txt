@@ -1,6 +1,11 @@
-Meta package for Django developers.
 
-Contain:
+Meta package for Django developers. In fact you should use `twod.wsgi`_ so you don't need all this messy stuff.
+
+Installation::
+
+  $ easy_install -U DjangoDevKit
+
+Contain (as dependencies):
 
 - `django-debug-toolbar`_
 
@@ -8,7 +13,7 @@ Contain:
 
 - `django-webtest`_
 
-This package also add some console scripts:
+This package also install some console scripts:
 
 - **django-admin**: work like ``./django-admin.py``.
 
@@ -33,3 +38,4 @@ This package also add some console scripts:
 .. _django-extensions: http://code.google.com/p/django-command-extensions/
 .. _django-webtest: http://pypi.python.org/pypi/django-webtest
 .. _weberror: http://bitbucket.org/bbangert/weberror
+.. _twod.wsgi: http://packages.python.org/twod.wsgi/
