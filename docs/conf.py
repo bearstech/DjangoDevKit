@@ -193,15 +193,6 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_use_modindex = True
 
-# Custom stuff
-try:
-    import rstctl
-    extensions = ['sphinx.ext.autodoc', 'rstctl.sphinx']
-except ImportError:
-    pass
-else:
-    del rstctl
-
 from os import path
 pkg_dir = path.abspath(__file__).split('/docs')[0]
 setup = path.join(pkg_dir, 'setup.py')
