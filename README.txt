@@ -10,17 +10,26 @@ Contain:
 
 This package also add some console scripts:
 
-- **django-manage**: work like ``./manage.py`` but add ``django-extensions`` to installed apps on the fly.
+- **django-admin**: work like ``./django-admin.py``.
+
+- **django-manage**: work like ``./manage.py`` but add ``django-extensions`` to ``INSTALLED_APPS`` on the fly.
 
 - **django-shell**: work like ``./manage.py shell`` but use the ``django-extensions`` ``shell_plus``
 
 - **django-test**: work like ``./manage.py test``.
 
-- **django-serve**: wrap the django application in a WebError middleware and serve
-  it. You can also use ``-t`` to add the ``django-debug-toolbar`` to
-  ``INSTALLED_APPS`` on the fly.
+- **django-serve**: wrap the Django application in a `WebError`_ middleware and
+  serve it. You can also use ``-t`` to add the ``django-debug-toolbar`` to
+  ``INSTALLED_APPS`` and ``MIDDLEWARE_CLASSES`` on the fly. You can also use
+  **request** and **post** to test a single request::
 
+    $ django-serve request /path arg1=foo
+
+    $ django-serve post /path arg1=foo
+
+    $ django-serve help [request|post]
 
 .. _django-debug-toolbar: http://github.com/robhudson/django-debug-toolbar
 .. _django-extensions: http://code.google.com/p/django-command-extensions/
 .. _django-webtest: http://pypi.python.org/pypi/django-webtest
+.. _weberror: http://bitbucket.org/bbangert/weberror
