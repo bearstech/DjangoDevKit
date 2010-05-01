@@ -17,14 +17,16 @@ This package also install some console scripts:
 
 - **django-admin**: work like ``./django-admin.py``.
 
-- **django-manage**: work like ``./manage.py`` but add ``django-extensions`` to ``INSTALLED_APPS`` on the fly.
+- **django-manage**: work like ``./manage.py`` but add `django-extensions` to ``INSTALLED_APPS`` on the fly.
 
-- **django-shell**: work like ``./manage.py shell`` but use the ``django-extensions`` ``shell_plus``
+- **django-shell**: work like ``./manage.py shell`` but use the `django-extensions` ``shell_plus``
 
-- **django-test**: work like ``./manage.py test``.
+- **django-test**: work like ``./manage.py test``. Also set
+  ``DEBUG_PROPAGATE_EXCEPTIONS`` to ``True`` so `WebTest` show the full traceback
+  in tests output.
 
 - **django-serve**: wrap the Django application in a `WebError`_ middleware and
-  serve it. You can also use ``-t`` to add the ``django-debug-toolbar`` to
+  serve it. You can also use ``-t`` to add the `django-debug-toolbar` to
   ``INSTALLED_APPS`` and ``MIDDLEWARE_CLASSES`` on the fly. You can also use
   **request** and **post** to test a single request::
 
