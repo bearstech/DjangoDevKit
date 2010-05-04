@@ -26,9 +26,10 @@ This package also install some console scripts:
   in tests output.
 
 - **django-serve**: wrap the Django application in a `WebError`_ middleware and
-  serve it. You can also use ``-t`` to add the `django-debug-toolbar` to
-  ``INSTALLED_APPS`` and ``MIDDLEWARE_CLASSES`` on the fly. You can also use
-  **request** and **post** to test a single request::
+  serve it. It's also serve `/media/` directories found in installed apps. You
+  can also use ``-t`` to add the `django-debug-toolbar` to ``INSTALLED_APPS``
+  and ``MIDDLEWARE_CLASSES`` on the fly. You can also use **request** and
+  **post** to test a single request::
 
     $ django-serve request /path arg1=foo
 

@@ -1,3 +1,8 @@
+0.2
+===
+
+Add MediaApp to serve media directories
+
 0.1
 ===
 

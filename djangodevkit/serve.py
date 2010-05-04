@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import utils
 import traceback
 import paste.script.command
+from djangodevkit import utils
+from djangodevkit.mediaapp import MediaMap
 from optparse import OptionParser
 from webob import Request, Response
+from paste.cascade import Cascade
 from paste.httpserver import serve
 from weberror.evalexception import EvalException
 import django.core.handlers.wsgi
@@ -42,15 +44,19 @@ def make_app(global_conf, **local_conf):
             return resp(environ, start_response)
         return django_app(environ, start_response)
 
-    if 'no_error' in conf:
-        return app
-    else:
-        return EvalException(app, debug=True)
+    if 'no_error' not in conf:
+        app = EvalException(app, debug=True)
+    if 'no_media' not in conf:
+        app = Cascade([app, MediaMap(settings)])
+    return app
 
 def main(*args, **kwargs):
     args = sys.argv
 
-    config = os.path.join(os.path.dirname(__file__), 'django-dev.ini')
+    if os.path.isfile('django-dev.ini'):
+        config = 'django-dev.ini'
+    else:
+        config = os.path.join(os.path.dirname(__file__), 'django-dev.ini')
 
     if 'help' in args:
         pass
@@ -64,15 +70,24 @@ def main(*args, **kwargs):
                           action="store_true", default=False)
         parser.add_option("-i", "--non-interactive", dest="interactive",
                           action="store_true", default=False)
+        parser.add_option("-m", "--no-media", dest="no_media",
+                          action="store_true", default=False)
         options, args = parser.parse_args()
+
         if options.toolbar:
             print 'Including django-debug-toolbar'
             sys.argv.append('toolbar=true')
+
         if options.interactive:
             sys.argv.append('no_error=true')
         else:
             print 'Including WebError middleware'
-        sys.argv = [a for a in sys.argv if a not in ('-t', '-i')]
+
+        if options.no_media:
+            print 'Do not serve media files'
+            sys.argv.append('no_media=true')
+
+        sys.argv = [a for a in sys.argv if a not in ('-t', '-i', '-m')]
         sys.argv[1:1] = ['serve', '--reload', config]
     paste.script.command.run()
 
