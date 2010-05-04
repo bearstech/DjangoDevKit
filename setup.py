@@ -44,7 +44,7 @@ setup(name='DjangoDevKit',
       packages=find_packages(exclude=['ez_setup', 'examples', 'docs', 'tests']),
       namespace_packages=['djangodevkit'],
       include_package_data=True,
-      zip_safe=True,
+      zip_safe=False,
       install_requires=[
           # -*- Extra requirements: -*-
           'PasteScript',
