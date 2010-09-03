@@ -10,7 +10,7 @@ from webob import Request, Response
 from paste.cascade import Cascade
 from paste.httpserver import serve
 from weberror.evalexception import EvalException
-import django.core.handlers.wsgi
+from twod.wsgi import wsgify_django
 
 
 def make_app(global_conf, **local_conf):
@@ -28,11 +28,16 @@ def make_app(global_conf, **local_conf):
 
     mod_name = conf.get('settings', os.environ.get('DJANGO_SETTINGS_MODULE', 'settings'))
     os.environ['DJANGO_SETTINGS_MODULE'] = mod_name
+    if 'django_settings_module' not in global_conf:
+        global_conf['django_settings_module'] = mod_name
+    if 'debug' not in global_conf:
+        global_conf['debug'] = 'true'
 
     settings = utils.get_settings(apps=apps, middlewares=middlewares)
+    del settings.DEBUG
 
 
-    django_app = django.core.handlers.wsgi.WSGIHandler()
+    django_app = wsgify_django(global_conf, **local_conf)
     def app(environ, start_response):
         if 'request' in sys.argv or 'post' in sys.argv:
             req = Request(environ)

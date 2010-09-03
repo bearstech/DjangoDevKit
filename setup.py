@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2'
+version = '0.5'
 
 def read(*names):
     values = dict()
@@ -48,6 +48,7 @@ setup(name='DjangoDevKit',
       install_requires=[
           # -*- Extra requirements: -*-
           'PasteScript',
+          'twod.wsgi',
           'WebOb',
           'WebError',
           'WebTest',
