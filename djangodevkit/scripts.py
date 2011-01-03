@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from paste.deploy import loadapp
+from djangodevkit import utils
 import utils
 import sys
 import os
@@ -11,7 +13,11 @@ os.environ['DJANGO_MODE'] = 'local'
 
 def manage(*args):
     settings = utils.get_settings(apps=('django_extensions',))
+    del settings.DEBUG
+    config = utils.get_config_file()
+    loadapp('config:%s' % config)
     from django.core.management import execute_manager
+    from django.conf import settings as sets
     sys.argv[1:1] = args
     execute_manager(settings)
 

@@ -58,18 +58,16 @@ def make_app(global_conf, **local_conf):
 def main(*args, **kwargs):
     args = sys.argv
 
-    if os.path.isfile('django-dev.ini'):
-        config = 'django-dev.ini'
-    else:
-        config = os.path.join(os.path.dirname(__file__), 'django-dev.ini')
-
     if 'help' in args:
         pass
     elif 'request' in args:
+        config = utils.get_config_file()
         sys.argv[2:2] = [config]
     elif 'post' in args:
+        config = utils.get_config_file()
         sys.argv[2:2] = [config]
     elif 'serve' not in args:
+        config = utils.get_config_file()
         parser = OptionParser()
         parser.add_option("-t", "--debug-toolbar", dest="toolbar",
                           action="store_true", default=False)
