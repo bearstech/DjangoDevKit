@@ -1,3 +1,8 @@
+0.6
+===
+
+Small fixe to work with twod.wsgi
+
 0.2
 ===
 
