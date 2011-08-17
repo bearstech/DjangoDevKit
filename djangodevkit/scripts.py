@@ -15,11 +15,14 @@ def manage(*args):
     settings = utils.get_settings(apps=('django_extensions',))
     del settings.DEBUG
     config = utils.get_config_file()
+    app = loadapp('config:%s' % config)
+    from django.core import management
+    management.setup_environ = lambda *args: os.getcwd
     loadapp('config:%s' % config)
     from django.core.management import execute_manager
     from django.conf import settings as sets
     sys.argv[1:1] = args
-    execute_manager(settings)
+    management.execute_manager(settings)
 
 def manage_test():
     manage('test')

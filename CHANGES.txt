@@ -1,3 +1,20 @@
+0.8.3
+=====
+
+Windows bug fix
+
+
+0.8.1
+=====
+
+Add all eggs to pkg_resources.working_set
+
+0.8
+===
+
+No longer use twod.wsgi
+
+
 0.6
 ===
 

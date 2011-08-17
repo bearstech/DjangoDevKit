@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import pkg_resources
+
+extra_eggs = []
+d = p = None
+for d in [p for p in sys.path if '/python' in p]:
+    if os.path.isdir(d) and d not in pkg_resources.working_set.entries:
+        pkg_resources.working_set.add_entry(d)
+for p in sys.path:
+    if p.endswith('.egg') and p not in pkg_resources.working_set.entries:
+        pkg_resources.working_set.add_entry(p)
+del p
+del d
+
 
 def get_settings(mod_name=None, apps=(), middlewares=()):
     mod_name = mod_name or os.environ.get('DJANGO_SETTINGS_MODULE', 'settings')

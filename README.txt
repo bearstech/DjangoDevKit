@@ -1,5 +1,5 @@
 
-Meta package for Django developers. In fact you should use `twod.wsgi`_ so you don't need all this messy stuff.
+Meta package for Django developers.
 
 Installation::
 

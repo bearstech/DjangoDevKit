@@ -10,7 +10,7 @@ from webob import Request, Response
 from paste.cascade import Cascade
 from paste.httpserver import serve
 from weberror.evalexception import EvalException
-from twod.wsgi import wsgify_django
+import django.core.handlers.wsgi
 
 
 def make_app(global_conf, **local_conf):
@@ -37,7 +37,7 @@ def make_app(global_conf, **local_conf):
     del settings.DEBUG
 
 
-    django_app = wsgify_django(global_conf, **local_conf)
+    django_app = django.core.handlers.wsgi.WSGIHandler()
     def app(environ, start_response):
         if 'request' in sys.argv or 'post' in sys.argv:
             req = Request(environ)
