@@ -34,8 +34,6 @@ def make_app(global_conf, **local_conf):
         global_conf['debug'] = 'true'
 
     settings = utils.get_settings(apps=apps, middlewares=middlewares)
-    del settings.DEBUG
-
 
     django_app = django.core.handlers.wsgi.WSGIHandler()
     def app(environ, start_response):
