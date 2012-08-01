@@ -24,10 +24,11 @@ class MediaMap(URLMap):
             map[settings.MEDIA_URL] = StaticURLParser(settings.MEDIA_ROOT)
 
         # admin medias
-        if settings.ADMIN_MEDIA_PREFIX.startswith('/'):
-            import django.contrib.admin
-            dirname = os.path.dirname(os.path.abspath(django.contrib.admin.__file__))
-            map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(os.path.join(dirname, 'media'))
+        if hasattr(settings, "ADMIN_MEDIA_PREFIX"):
+            if settings.ADMIN_MEDIA_PREFIX.startswith('/'):
+                import django.contrib.admin
+                dirname = os.path.dirname(os.path.abspath(django.contrib.admin.__file__))
+                map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(os.path.join(dirname, 'media'))
         for k in sorted(map, reverse=True):
             v = map[k]
             print '%s -> %s' % (k, v.directory)
