@@ -3,6 +3,24 @@ import os
 import glob
 from paste.urlmap import URLMap
 from paste.urlparser import StaticURLParser
+from paste.fileapp import FileApp
+import posixpath
+import urllib
+
+
+class StaticFiles(object):
+
+    def __init__(self, settings):
+        from django.contrib.staticfiles import finders
+        self.finders = finders
+        self.settings = settings
+
+    def __call__(self, environ, start_response):
+        path = environ['PATH_INFO']
+        normalized_path = posixpath.normpath(urllib.unquote(path)).lstrip('/')
+        absolute_path = self.finders.find(normalized_path)
+        return FileApp(absolute_path)(environ, start_response)
+
 
 class MediaMap(URLMap):
     """An app to iterate over installed apps and bound the media directory to a
@@ -20,17 +38,32 @@ class MediaMap(URLMap):
                 for media in medias:
                     dummy, name = os.path.split(media)
                     if not dirname.startswith('.'):
-                        map[settings.MEDIA_URL+name] = StaticURLParser(media)
+                        map[settings.MEDIA_URL + name] = StaticURLParser(media)
             map[settings.MEDIA_URL] = StaticURLParser(settings.MEDIA_ROOT)
 
+        # staticfiles
+        has_statics = False
+        if hasattr(settings, "STATIC_URL"):
+            if settings.STATIC_URL.startswith('/'):
+                try:
+                    map[settings.STATIC_URL] = StaticFiles(settings)
+                except ImportError:
+                    pass
+                else:
+                    has_statics = True
+
         # admin medias
-        if hasattr(settings, "ADMIN_MEDIA_PREFIX"):
+        if not has_statics and hasattr(settings, "ADMIN_MEDIA_PREFIX"):
             if settings.ADMIN_MEDIA_PREFIX.startswith('/'):
                 import django.contrib.admin
-                dirname = os.path.dirname(os.path.abspath(django.contrib.admin.__file__))
-                map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(os.path.join(dirname, 'media'))
+                dirname = os.path.dirname(os.path.abspath(
+                                                django.contrib.admin.__file__))
+                map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(
+                                                os.path.join(dirname, 'media'))
         for k in sorted(map, reverse=True):
             v = map[k]
-            print '%s -> %s' % (k, v.directory)
+            if k == settings.STATIC_URL:
+                print '%s -> %s*' % (k, settings.STATIC_ROOT or '/statics/')
+            else:
+                print '%s -> %s' % (k, v.directory)
             self[k] = v
-
