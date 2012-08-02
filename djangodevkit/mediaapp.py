@@ -19,7 +19,12 @@ class StaticFiles(object):
         path = environ['PATH_INFO']
         normalized_path = posixpath.normpath(urllib.unquote(path)).lstrip('/')
         absolute_path = self.finders.find(normalized_path)
-        return FileApp(absolute_path)(environ, start_response)
+        if not absolute_path:
+            print 'Static file %s does not exist' % path
+            start_response('404 NotFound', [])
+            return ['']
+        else:
+            return FileApp(absolute_path)(environ, start_response)
 
 
 class MediaMap(URLMap):

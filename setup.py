@@ -1,20 +1,21 @@
 from setuptools import setup, find_packages
-import sys, os
+import os
 
-version = '0.8.4'
+version = '0.8.6'
+
 
 def read(*names):
     values = dict()
     for name in names:
-        filename = name+'.txt'
+        filename = name + '.txt'
         if os.path.isfile(filename):
-            value = open(name+'.txt').read()
+            value = open(name + '.txt').read()
         else:
             value = ''
         values[name] = value
     return values
 
-long_description="""
+long_description = """
 %(README)s
 
 See http://www.gawel.org/docs/DjangoDevKit/ for the full documentation
@@ -41,7 +42,8 @@ setup(name='DjangoDevKit',
       author_email='gael@gawel.org',
       url='http://www.gawel.org/docs/DjangoDevKit/',
       license='MIT',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'docs', 'tests']),
+      packages=find_packages(exclude=['ez_setup', 'examples',
+                                      'docs', 'tests']),
       namespace_packages=['djangodevkit'],
       include_package_data=True,
       zip_safe=False,

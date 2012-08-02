@@ -8,7 +8,6 @@ from djangodevkit.mediaapp import MediaMap
 from optparse import OptionParser
 from webob import Request, Response
 from paste.cascade import Cascade
-from paste.httpserver import serve
 from weberror.evalexception import EvalException
 import django.core.handlers.wsgi
 
@@ -21,12 +20,13 @@ def make_app(global_conf, **local_conf):
     if 'request' in sys.argv or 'post' in sys.argv:
         conf['no_error'] = True
 
-    apps = middlewares =()
+    apps = middlewares = ()
     if conf.get('toolbar', False):
         apps = ('debug_toolbar',)
         middlewares = ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 
-    mod_name = conf.get('settings', os.environ.get('DJANGO_SETTINGS_MODULE', 'settings'))
+    mod_name = conf.get('settings',
+                        os.environ.get('DJANGO_SETTINGS_MODULE', 'settings'))
     os.environ['DJANGO_SETTINGS_MODULE'] = mod_name
     if 'django_settings_module' not in global_conf:
         global_conf['django_settings_module'] = mod_name
@@ -36,12 +36,13 @@ def make_app(global_conf, **local_conf):
     settings = utils.get_settings(apps=apps, middlewares=middlewares)
 
     django_app = django.core.handlers.wsgi.WSGIHandler()
+
     def app(environ, start_response):
         if 'request' in sys.argv or 'post' in sys.argv:
             req = Request(environ)
             try:
                 resp = req.get_response(django_app)
-            except Exception, e:
+            except Exception:
                 resp = Response(content_type='text/plain')
                 traceback.print_exc(file=resp.body_file)
             return resp(environ, start_response)
@@ -52,6 +53,7 @@ def make_app(global_conf, **local_conf):
     if 'no_media' not in conf:
         app = Cascade([app, MediaMap(settings)])
     return app
+
 
 def main(*args, **kwargs):
     args = sys.argv
@@ -91,4 +93,3 @@ def main(*args, **kwargs):
         sys.argv = [a for a in sys.argv if a not in ('-t', '-i', '-m')]
         sys.argv[1:1] = ['serve', '--reload', config]
     paste.script.command.run()
-
