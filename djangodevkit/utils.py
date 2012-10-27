@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import glob
 import pkg_resources
 
 extra_eggs = []
@@ -16,15 +17,31 @@ del d
 
 
 def get_settings(mod_name=None, apps=(), middlewares=()):
+    os.environ['DEVELOPMENT'] = '1'
+    settings = ['settings.py'] + glob.glob(os.path.join('*', 'settings.py'))
+    for filename in settings:
+        if os.path.isfile(filename):
+            dirname = os.path.dirname(os.path.abspath(filename))
+            if os.path.isfile(os.path.join(dirname, '__init__.py')):
+                # Django 1.4+
+                dirname, proj = os.path.split(os.path.abspath(os.getcwd()))
+                sys.path.insert(0, dirname)
+                os.environ['DJANGO_SETTINGS_MODULE'] = '%s.settings' % proj
+            else:
+                # Django 1.3
+                sys.path.insert(0, dirname)
+                os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
     mod_name = mod_name or os.environ.get('DJANGO_SETTINGS_MODULE', 'settings')
     settings = __import__(mod_name, globals(), locals(), [''])
     settings.DEBUG = True
     settings.TEMPLATE_DEBUG = True
     settings.DEBUG_PROPAGATE_EXCEPTIONS = True
     settings.INSTALLED_APPS += tuple(apps)
-    settings.MIDDLEWARE_CLASSES = tuple(middlewares) + tuple(settings.MIDDLEWARE_CLASSES)
+    settings.MIDDLEWARE_CLASSES = tuple(middlewares) + \
+                                  tuple(settings.MIDDLEWARE_CLASSES)
     settings.INTERNAL_IPS = ('127.0.0.1',)
     return settings
+
 
 def get_config_file():
     configs = [arg for arg in sys.argv if arg.endswith('.ini')]

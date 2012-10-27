@@ -67,8 +67,4 @@ class MediaMap(URLMap):
                                                 os.path.join(dirname, 'media'))
         for k in sorted(map, reverse=True):
             v = map[k]
-            if k == settings.STATIC_URL:
-                print '%s -> %s*' % (k, settings.STATIC_ROOT or '/statics/')
-            else:
-                print '%s -> %s' % (k, v.directory)
             self[k] = v
