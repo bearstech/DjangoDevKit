@@ -1,7 +1,7 @@
-0.8.7
+1.0
 =====
 
-Make it work with django 1.4+
+Make it work with django 1.4+ and virtualenv
 
 Add aliases machinery
 

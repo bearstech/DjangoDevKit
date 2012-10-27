@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.8.7'
+version = '1.0'
 
 
 def read(*names):
