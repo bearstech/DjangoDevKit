@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from ConfigParser import ConfigParser
 from paste.deploy import loadapp
 from djangodevkit import utils
 import sys
@@ -19,8 +20,28 @@ def manage(*args):
     management.setup_environ = lambda *args: os.getcwd
     loadapp('config:%s' % config)
     from django.conf import settings as sets # NOQA
-    sys.argv[1:1] = args
-    management.execute_manager(settings)
+    args = args or sys.argv[1:]
+    cmd = args[0]
+    config = ConfigParser()
+    config.read(os.path.expanduser('~/.djangodevkitrc'))
+    try:
+        alias = config.get('aliases', cmd)
+    except:
+        cmds = [args]
+    else:
+        sargs = ' '.join(args[1:])
+        cmds = [a.replace('[]', sargs) for a in alias.split('\n') if a.strip()]
+        cmds = [a.split() for a in cmds]
+    for cmd in cmds:
+        sys.argv[1:] = cmd
+        management.execute_manager(settings)
+
+
+def manage_migrate():
+    manage('syncdb', '--noinput')
+    from django.conf import settings
+    if 'south' in settings.INSTALLED_APPS:
+        manage('migrate', '--noinput')
 
 
 def manage_test():

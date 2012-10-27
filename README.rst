@@ -1,3 +1,5 @@
+DjangoDevKit
+=============
 
 Meta package for Django developers.
 
@@ -21,6 +23,8 @@ This package also install some console scripts:
 
 - **django-shell**: work like ``./manage.py shell`` but use the `django-extensions` ``shell_plus``
 
+- **django-migrate**: work like ``./manage.py syncdb --nointput && ./manage.py migrate --noinput`` Run migrate only if south is installed.
+
 - **django-test**: work like ``./manage.py test``. Also set
   ``DEBUG_PROPAGATE_EXCEPTIONS`` to ``True`` so `WebTest` show the full traceback
   in tests output.
@@ -37,8 +41,28 @@ This package also install some console scripts:
 
     $ django-serve help [request|post]
 
+You can also use some aliases. Create a ``~/.djangodevkitrc`` like this::
+
+    [aliases]
+    m =
+        syncdb --noinput
+        migrate --noinput
+    si =
+        schemamigration --initial []
+    sm =
+        schemamigration --auto []
+
+``[]`` is replace with command line arguments. This mean that::
+
+    $ django-manage sm myapp
+
+is equal to::
+
+    $ ./manage.py schemamigration --auto myapp
+
+Notices that aliases are not listed in ``django-manage``'s help
+
 .. _django-debug-toolbar: http://github.com/robhudson/django-debug-toolbar
 .. _django-extensions: http://code.google.com/p/django-command-extensions/
 .. _django-webtest: http://pypi.python.org/pypi/django-webtest
 .. _weberror: http://bitbucket.org/bbangert/weberror
-.. _twod.wsgi: http://packages.python.org/twod.wsgi/

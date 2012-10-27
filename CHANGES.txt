@@ -1,3 +1,10 @@
+0.8.7
+=====
+
+Make it work with django 1.4+
+
+Add aliases machinery
+
 0.8.3
 =====
 

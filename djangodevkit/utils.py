@@ -24,7 +24,7 @@ def get_settings(mod_name=None, apps=(), middlewares=()):
             dirname = os.path.dirname(os.path.abspath(filename))
             if os.path.isfile(os.path.join(dirname, '__init__.py')):
                 # Django 1.4+
-                dirname, proj = os.path.split(os.path.abspath(os.getcwd()))
+                dirname, proj = os.path.split(dirname)
                 sys.path.insert(0, dirname)
                 os.environ['DJANGO_SETTINGS_MODULE'] = '%s.settings' % proj
             else:

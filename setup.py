@@ -1,31 +1,28 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.8.6'
+version = '0.8.7'
 
 
 def read(*names):
     values = dict()
     for name in names:
-        filename = name + '.txt'
-        if os.path.isfile(filename):
-            value = open(name + '.txt').read()
+        if os.path.isfile(name):
+            value = open(name).read()
         else:
             value = ''
         values[name] = value
     return values
 
 long_description = """
-%(README)s
-
-See http://www.gawel.org/docs/DjangoDevKit/ for the full documentation
+%(README.rst)s
 
 News
 ====
 
-%(CHANGES)s
+%(CHANGES.txt)s
 
-""" % read('README', 'CHANGES')
+""" % read('README.rst', 'CHANGES.txt')
 
 setup(name='DjangoDevKit',
       version=version,
@@ -63,6 +60,7 @@ setup(name='DjangoDevKit',
       [console_scripts]
       django-serve = djangodevkit.serve:main
       django-manage = djangodevkit.scripts:manage
+      django-migrate = djangodevkit.scripts:manage_migrate
       django-shell = djangodevkit.scripts:manage_shell
       django-test = djangodevkit.scripts:manage_test
       django-admin = djangodevkit.scripts:admin
