@@ -21,6 +21,10 @@ def manage(*args):
     loadapp('config:%s' % config)
     from django.conf import settings as sets # NOQA
     args = args or sys.argv[1:]
+
+    if not args:
+        return sys.exit(management.execute_manager(settings))
+
     cmd = args[0]
     config = ConfigParser()
     config.read(os.path.expanduser('~/.djangodevkitrc'))
