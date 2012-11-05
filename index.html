@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>DjangoDevKit</title>
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="static/impress.css" type="text/css" />
+    <link rel="stylesheet" href="static/custom.css" type="text/css" />
+  </head>
+  <body>
+    <div id="impress">
+      
+  <div class="step first center slide section" id="djangodevkit">
+<h1>
+DjangoDevKit<a class="headerlink" href="#djangodevkit" title="Permalink to this headline">¶</a></h1>
+<p>
+Gael Pasgrimaud</p>
+<p>
+<a class="reference external" href="http://twitter.com/gawel_">
+&#64;gawel_</a></p>
+</div>
+<div class="step slide section" data-rotate-x="20.9439510239" data-rotate-y="41.8879020479" data-x="648.362767042" data-y="1009.76518177" data-z="0.0" id="why">
+<h1>
+Why ?<a class="headerlink" href="#why" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>
+I use buildout. <tt class="docutils literal">
+<span class="pre">manage.py</span></tt> dont work with buildout</li>
+<li>
+I always use same development tools</li>
+</ul>
+</div>
+<div class="step slide section" data-rotate-x="41.8879020479" data-rotate-y="83.7758040957" data-x="-499.376203857" data-y="1091.15691219" data-z="831.776616672" id="how">
+<h1>
+How ?<a class="headerlink" href="#how" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>
+meta package. requires DjDt, Dj-extensions, IPython</li>
+<li>
+extra binaries scripts. django-manage, django-serve, django-shell</li>
+<li>
+pre-load <tt class="docutils literal">
+<span class="pre">settings.py</span></tt> and update it on the fly</li>
+</ul>
+</div>
+<div class="step slide section" data-rotate-x="62.8318530718" data-rotate-y="125.663706144" data-x="-1187.99099592" data-y="169.344009672" data-z="1318.3347464" id="usage">
+<h1>
+Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>
+Install it:</p>
+<div class="highlight-python">
+<pre>$ pip install DjangoDevKit</pre>
+</div>
+<p>
+Use it:</p>
+<div class="highlight-python">
+<pre>$ django-manage</pre>
+</div>
+</div>
+<div class="step slide section" data-rotate-x="83.7758040957" data-rotate-y="167.551608191" data-x="-784.372345036" data-y="-908.16299437" data-z="1663.55323334" id="debug-server">
+<h1>
+Debug server<a class="headerlink" href="#debug-server" title="Permalink to this headline">¶</a></h1>
+<p>
+Wrap django application with WebError and serve it with Paste:</p>
+<div class="highlight-python">
+<pre>$ django-serve</pre>
+</div>
+<p>
+Same with django toolbar activated:</p>
+<div class="highlight-python">
+<pre>$ django-serve -t</pre>
+</div>
+</div>
+<div class="step slide section" data-rotate-x="104.71975512" data-rotate-y="209.439510239" data-x="340.394622556" data-y="-1150.7091296" data-z="1931.32549492" id="aliases">
+<h1>
+Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h1>
+<p>
+You can put some aliases in your ~/.djangodevkitrc:</p>
+<div class="highlight-ini">
+<div class="highlight"><pre><span class="k">[aliases]</span>
+<span class="na">m</span> <span class="o">=</span><span class="s"></span>
+<span class="s">    syncdb --noinput</span>
+<span class="s">    migrate --noinput</span>
+<span class="na">si</span> <span class="o">=</span><span class="s"></span>
+<span class="s">    schemamigration --initial []</span>
+<span class="na">sm</span> <span class="o">=</span><span class="s"></span>
+<span class="s">    schemamigration --auto []</span>
+</pre></div>
+</div>
+</div>
+<div class="step section" data-rotate-x="67.4532925199" data-rotate-y="209.439510239" data-scale="4" data-x="0.0" data-y="-250.0" data-z="700" id="that-s-it">
+<h1>
+That&#8217;s it!<a class="headerlink" href="#that-s-it" title="Permalink to this headline">¶</a></h1>
+<p>
+For more information check:</p>
+<p>
+<a class="reference external" href="http://pypi.python.org/DjangoDevKit">
+pypi.python.org/DjangoDevKit</a></p>
+<p>
+<a class="reference external" href="http://github.com/bearstech/DjangoDevKit/">
+github.com/bearstech/DjangoDevKit</a></p>
+<p>
+Powered by <a class="reference external" href="http://github.com/gawel/impress">
+github.com/gawel/impress</a></p>
+</div>
+
+
+    </div>
+    <script src="static/impress/js/impress.js"></script>
+    <script src="static/jquery.js"></script>
+    <script src="static/impress.js"></script>
+    <script src="static/custom.js"></script>
+    <script>
+      if (! /_modules/.exec(window.location.href)) {
+        impress().init();
+      }
+    </script>
+  </body>
+</html>
