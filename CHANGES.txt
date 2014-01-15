@@ -1,4 +1,4 @@
-1.0.1 (unreleased)
+1.0.1 (2014-01-15)
 ==================
 
 Take care if DJANGO_SETTINGS_MODULE is already set
