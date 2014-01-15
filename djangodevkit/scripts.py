@@ -15,11 +15,11 @@ def manage(*args):
     settings = utils.get_settings(apps=('django_extensions',))
     del settings.DEBUG
     config = utils.get_config_file()
-    app = loadapp('config:%s' % config) # NOQA
+    app = loadapp('config:%s' % config)  # NOQA
     from django.core import management
     management.setup_environ = lambda *args: os.getcwd
     loadapp('config:%s' % config)
-    from django.conf import settings as sets # NOQA
+    from django.conf import settings as sets  # NOQA
     args = args or sys.argv[1:]
 
     if not args:
@@ -57,5 +57,7 @@ def manage_shell():
 
 
 def admin():
+    if 'DJANGO_SETTINGS_MODULE' in os.environ:
+        del os.environ['DJANGO_SETTINGS_MODULE']
     from django.core.management import execute_from_command_line
     execute_from_command_line()

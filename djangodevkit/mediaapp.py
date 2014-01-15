@@ -33,7 +33,7 @@ class MediaMap(URLMap):
     def __init__(self, settings):
         URLMap.__init__(self)
         map = {}
-        if settings.MEDIA_URL.startswith('/'):
+        if getattr(settings, 'MEDIA_URL', '').startswith('/'):
             for app_name in settings.INSTALLED_APPS:
                 if app_name == 'django.contrib.admin':
                     continue
@@ -62,9 +62,9 @@ class MediaMap(URLMap):
             if settings.ADMIN_MEDIA_PREFIX.startswith('/'):
                 import django.contrib.admin
                 dirname = os.path.dirname(os.path.abspath(
-                                                django.contrib.admin.__file__))
+                    django.contrib.admin.__file__))
                 map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(
-                                                os.path.join(dirname, 'media'))
+                    os.path.join(dirname, 'media'))
         for k in sorted(map, reverse=True):
             v = map[k]
             self[k] = v
