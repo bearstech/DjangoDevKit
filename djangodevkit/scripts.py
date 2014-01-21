@@ -12,18 +12,27 @@ os.environ['DJANGO_MODE'] = 'local'
 
 
 def manage(*args):
-    settings = utils.get_settings(apps=('django_extensions',))
+    settings = utils.get_settings(
+        apps=('django_extensions',),
+        DEBUG_PROPAGATE_EXCEPTIONS=False)
     del settings.DEBUG
     config = utils.get_config_file()
     app = loadapp('config:%s' % config)  # NOQA
     from django.core import management
-    management.setup_environ = lambda *args: os.getcwd
+    if utils.get_version() < (1, 4):
+        # django < 1.6
+        def run(argv=None):
+            return management.execute_manager(settings)
+        management.setup_environ = lambda *args: os.getcwd
+    else:
+        def run(argv=None):
+            return management.execute_from_command_line(argv=argv)
     loadapp('config:%s' % config)
     from django.conf import settings as sets  # NOQA
     args = args or sys.argv[1:]
 
     if not args:
-        return sys.exit(management.execute_manager(settings))
+        return sys.exit(run())
 
     cmd = args[0]
     config = ConfigParser()
@@ -38,7 +47,7 @@ def manage(*args):
         cmds = [a.split() for a in cmds]
     for cmd in cmds:
         sys.argv[1:] = cmd
-        management.execute_manager(settings)
+        run(argv=sys.argv)
 
 
 def manage_migrate():

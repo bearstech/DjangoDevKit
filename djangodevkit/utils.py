@@ -13,7 +13,7 @@ for p in sys.path:
         pkg_resources.working_set.add_entry(p)
 
 
-def get_settings(mod_name=None, apps=(), middlewares=()):
+def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
     os.environ['DEVELOPMENT'] = '1'
     if 'DJANGO_SETTINGS_MODULE' not in os.environ:
         settings = ['settings.py']
@@ -39,6 +39,8 @@ def get_settings(mod_name=None, apps=(), middlewares=()):
     settings.MIDDLEWARE_CLASSES = \
         tuple(middlewares) + tuple(settings.MIDDLEWARE_CLASSES)
     settings.INTERNAL_IPS = ('127.0.0.1',)
+    for k, v in kw.items():
+        setattr(settings, k.upper(), v)
     return settings
 
 
@@ -54,3 +56,8 @@ def get_config_file():
             config = os.path.join(os.path.dirname(__file__), 'django-dev.ini')
         config = os.path.abspath(config)
     return config
+
+
+def get_version():
+    from django import VERSION
+    return VERSION[0:2]
