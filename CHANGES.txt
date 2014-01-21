@@ -1,4 +1,4 @@
-1.0.2 (unreleased)
+1.0.2 (2014-01-21)
 ==================
 
 - Rewrite MediaApp
