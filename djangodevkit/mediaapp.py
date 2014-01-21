@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 import glob
-from paste.urlmap import URLMap
-from paste.urlparser import StaticURLParser
-from paste.fileapp import FileApp
 import posixpath
 import urllib
+from webob import static
 
 
 class StaticFiles(object):
 
-    def __init__(self, settings):
+    def __init__(self):
         from django.contrib.staticfiles import finders
         self.finders = finders
-        self.settings = settings
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO']
@@ -24,14 +21,13 @@ class StaticFiles(object):
             start_response('404 NotFound', [])
             return ['']
         else:
-            return FileApp(absolute_path)(environ, start_response)
+            return static.FileApp(absolute_path)(environ, start_response)
 
 
-class MediaMap(URLMap):
+class MediaMap(list):
     """An app to iterate over installed apps and bound the media directory to a
-    StaticURLParser"""
+    DirectoryApp"""
     def __init__(self, settings):
-        URLMap.__init__(self)
         map = {}
         if getattr(settings, 'MEDIA_URL', '').startswith('/'):
             for app_name in settings.INSTALLED_APPS:
@@ -43,15 +39,16 @@ class MediaMap(URLMap):
                 for media in medias:
                     dummy, name = os.path.split(media)
                     if not dirname.startswith('.'):
-                        map[settings.MEDIA_URL + name] = StaticURLParser(media)
-            map[settings.MEDIA_URL] = StaticURLParser(settings.MEDIA_ROOT)
+                        map[settings.MEDIA_URL + name] = \
+                            static.DirectoryApp(media)
+            map[settings.MEDIA_URL] = static.DirectoryApp(settings.MEDIA_ROOT)
 
         # staticfiles
         has_statics = False
         if hasattr(settings, "STATIC_URL"):
             if settings.STATIC_URL.startswith('/'):
                 try:
-                    map[settings.STATIC_URL] = StaticFiles(settings)
+                    map[settings.STATIC_URL] = StaticFiles()
                 except ImportError:
                     pass
                 else:
@@ -63,8 +60,16 @@ class MediaMap(URLMap):
                 import django.contrib.admin
                 dirname = os.path.dirname(os.path.abspath(
                     django.contrib.admin.__file__))
-                map[settings.ADMIN_MEDIA_PREFIX] = StaticURLParser(
+                map[settings.ADMIN_MEDIA_PREFIX] = static.DirectoryApp(
                     os.path.join(dirname, 'media'))
-        for k in sorted(map, reverse=True):
-            v = map[k]
-            self[k] = v
+
+        for l, k in sorted([(len(k), k) for k in map], reverse=True):
+            self.append((k, map[k]))
+
+    def __call__(self, environ, start_response):
+        path = environ['PATH_INFO']
+        for k, v in self:
+            if path.startswith(k):
+                environ = environ.copy()
+                environ['PATH_INFO'] = path[len(k):]
+                return v(environ, start_response)
