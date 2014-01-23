@@ -33,7 +33,11 @@ def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
                     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
                 break
     mod_name = mod_name or os.environ.get('DJANGO_SETTINGS_MODULE', 'settings')
-    settings = __import__(mod_name, globals(), locals(), [''])
+    try:
+        settings = __import__(mod_name, globals(), locals(), [''])
+    except ImportError:
+        sys.path.append(os.getcwd())
+        settings = __import__(mod_name, globals(), locals(), [''])
     settings.DEBUG = True
     settings.TEMPLATE_DEBUG = True
     settings.DEBUG_PROPAGATE_EXCEPTIONS = True
