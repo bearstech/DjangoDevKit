@@ -15,9 +15,10 @@ for p in sys.path:
 
 def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
     os.environ['DEVELOPMENT'] = '1'
-    if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+    settings = os.environ.get('DJANGO_SETTINGS_MODULE')
+    if settings in (None, 'settings', 'settings.py'):
         settings = ['settings.py']
-        settings.extends(glob.glob(os.path.join('*', 'settings.py')))
+        settings.extend(glob.glob(os.path.join('*', 'settings.py')))
         for filename in settings:
             if os.path.isfile(filename):
                 dirname = os.path.dirname(os.path.abspath(filename))
@@ -30,6 +31,7 @@ def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
                     # Django 1.3
                     sys.path.insert(0, dirname)
                     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+                break
     mod_name = mod_name or os.environ.get('DJANGO_SETTINGS_MODULE', 'settings')
     settings = __import__(mod_name, globals(), locals(), [''])
     settings.DEBUG = True
