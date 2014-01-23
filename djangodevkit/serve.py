@@ -9,7 +9,6 @@ from optparse import OptionParser
 from webob import Request, Response
 from paste.cascade import Cascade
 from weberror.evalexception import EvalException
-import django.core.handlers.wsgi
 
 
 def make_app(global_conf, **local_conf):
@@ -35,6 +34,7 @@ def make_app(global_conf, **local_conf):
 
     settings = utils.get_settings(apps=apps, middlewares=middlewares)
 
+    import django.core.handlers.wsgi
     django_app = django.core.handlers.wsgi.WSGIHandler()
 
     def app(environ, start_response):
