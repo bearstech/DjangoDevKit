@@ -1,7 +1,7 @@
 1.0.3 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fix #5
 
 
 1.0.2 (2014-01-21)
