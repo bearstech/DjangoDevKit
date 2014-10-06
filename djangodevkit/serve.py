@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 import paste.script.command
+from django.core import checks
 from djangodevkit import utils
 from djangodevkit.mediaapp import MediaMap
 from optparse import OptionParser
@@ -34,8 +35,13 @@ def make_app(global_conf, **local_conf):
 
     settings = utils.get_settings(apps=apps, middlewares=middlewares)
 
-    import django.core.handlers.wsgi
-    django_app = django.core.handlers.wsgi.WSGIHandler()
+    try:
+        from django.core.wsgi import get_wsgi_application
+    except ImportError:
+        import django.core.handlers.wsgi
+        django_app = django.core.handlers.wsgi.WSGIHandler()
+    else:
+        django_app = get_wsgi_application()
 
     def app(environ, start_response):
         if 'request' in sys.argv or 'post' in sys.argv:

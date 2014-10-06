@@ -16,9 +16,9 @@ def manage(*args):
         apps=('django_extensions',),
         DEBUG_PROPAGATE_EXCEPTIONS=False)
     del settings.DEBUG
+    from django.core import management
     config = utils.get_config_file()
     app = loadapp('config:%s' % config)  # NOQA
-    from django.core import management
     if utils.get_version() < (1, 4):
         # django < 1.6
         def run(argv=None):
@@ -28,7 +28,8 @@ def manage(*args):
         def run(argv=None):
             return management.execute_from_command_line(argv=argv)
     loadapp('config:%s' % config)
-    from django.conf import settings as sets  # NOQA
+    if utils.get_version() < (1, 7):
+        from django.conf import settings as sets  # NOQA
     args = args or sys.argv[1:]
 
     if not args:
@@ -47,14 +48,18 @@ def manage(*args):
         cmds = [a.split() for a in cmds]
     for cmd in cmds:
         sys.argv[1:] = cmd
+        print(sys.argv)
         run(argv=sys.argv)
 
 
 def manage_migrate():
     manage('syncdb', '--noinput')
-    from django.conf import settings
-    if 'south' in settings.INSTALLED_APPS:
+    if utils.get_version() >= (1, 7):
         manage('migrate', '--noinput')
+    else:
+        from django.conf import settings
+        if 'south' in settings.INSTALLED_APPS:
+            manage('migrate', '--noinput')
 
 
 def manage_test():
