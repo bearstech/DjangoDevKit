@@ -48,7 +48,6 @@ def manage(*args):
         cmds = [a.split() for a in cmds]
     for cmd in cmds:
         sys.argv[1:] = cmd
-        print(sys.argv)
         run(argv=sys.argv)
 
 
