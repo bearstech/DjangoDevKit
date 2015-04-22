@@ -17,7 +17,7 @@ class StaticFiles(object):
         normalized_path = posixpath.normpath(urllib.unquote(path)).lstrip('/')
         absolute_path = self.finders.find(normalized_path)
         if not absolute_path:
-            print 'Static file %s does not exist' % path
+            print('Static file %s does not exist' % path)
             start_response('404 NotFound', [])
             return ['']
         else:

@@ -84,16 +84,16 @@ def main(*args, **kwargs):
         options, args = parser.parse_args()
 
         if options.toolbar:
-            print 'Including django-debug-toolbar'
+            print('Including django-debug-toolbar')
             sys.argv.append('toolbar=true')
 
         if options.interactive:
             sys.argv.append('no_error=true')
         else:
-            print 'Including WebError middleware'
+            print('Including WebError middleware')
 
         if options.no_media:
-            print 'Do not serve media files'
+            print('Do not serve media files')
             sys.argv.append('no_media=true')
 
         sys.argv = [a for a in sys.argv if a not in ('-t', '-i', '-m')]
