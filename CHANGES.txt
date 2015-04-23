@@ -1,8 +1,11 @@
 1.0.6 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Use backlash instead of weberror
 
+- Remove Paste dependencies
+
+- py3 compat
 
 1.0.5 (2015-04-09)
 ==================
