@@ -24,6 +24,18 @@ News
 
 """ % read('README.rst', 'CHANGES.txt')
 
+install_requires = [
+    'WebOb',
+    'backlash',
+    'WebTest',
+    'IPython',
+    'waitress',
+    'django-webtest',
+    'django-extensions',
+    'django-debug-toolbar',
+]
+
+
 setup(name='DjangoDevKit',
       version=version,
       description="DjangoDevKit package",
@@ -44,19 +56,7 @@ setup(name='DjangoDevKit',
       namespace_packages=['djangodevkit'],
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          # -*- Extra requirements: -*-
-          'Paste',
-          'PasteDeploy',
-          'PasteScript',
-          'WebOb',
-          'WebError',
-          'WebTest',
-          'IPython',
-          'django-webtest',
-          'django-extensions',
-          'django-debug-toolbar',
-      ],
+      install_requires=install_requires,
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
@@ -64,7 +64,6 @@ setup(name='DjangoDevKit',
       django-manage = djangodevkit.scripts:manage
       django-migrate = djangodevkit.scripts:manage_migrate
       django-shell = djangodevkit.scripts:manage_shell
-      django-test = djangodevkit.scripts:manage_test
       django-admin = djangodevkit.scripts:admin
       [paste.app_factory]
       main = djangodevkit.serve:make_app

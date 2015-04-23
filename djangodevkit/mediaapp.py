@@ -2,8 +2,12 @@
 import os
 import glob
 import posixpath
-import urllib
 from webob import static
+
+try:
+    from urllib import unquote
+except:
+    from urllib.parse import unquote
 
 
 class StaticFiles(object):
@@ -14,7 +18,7 @@ class StaticFiles(object):
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO']
-        normalized_path = posixpath.normpath(urllib.unquote(path)).lstrip('/')
+        normalized_path = posixpath.normpath(unquote(path)).lstrip('/')
         absolute_path = self.finders.find(normalized_path)
         if not absolute_path:
             print('Static file %s does not exist' % path)

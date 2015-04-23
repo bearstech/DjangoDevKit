@@ -1,15 +1,39 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import traceback
-import paste.script.command
-from django.core import checks
+import webob
+import backlash
+import waitress
 from djangodevkit import utils
 from djangodevkit.mediaapp import MediaMap
 from optparse import OptionParser
-from webob import Request, Response
-from paste.cascade import Cascade
-from weberror.evalexception import EvalException
+
+
+class Cascade(object):
+
+    def __init__(self, app, medias):
+        self.app = app
+        self.medias = medias
+
+    def log(self, req, resp):
+        print('{0.method} {0.path_info} {1.status}'.format(req, resp))
+
+    def __call__(self, environ, start_response):
+        req = webob.Request(environ)
+        req.environ['wsgi.errors'] = sys.stderr
+        resp = req.get_response(self.app)
+        if resp.status_int != 404:
+            self.log(req, resp)
+            return resp(environ, start_response)
+        if self.medias:
+            media = self.medias(environ, start_response)
+            if media is None:
+                self.log(req, resp)
+                return resp(environ, start_response)
+            return media
+        else:
+            self.log(req, resp)
+            return resp(environ, start_response)
 
 
 def make_app(global_conf, **local_conf):
@@ -39,63 +63,80 @@ def make_app(global_conf, **local_conf):
         from django.core.wsgi import get_wsgi_application
     except ImportError:
         import django.core.handlers.wsgi
-        django_app = django.core.handlers.wsgi.WSGIHandler()
+        app = django.core.handlers.wsgi.WSGIHandler()
     else:
-        django_app = get_wsgi_application()
+        app = get_wsgi_application()
 
-    def app(environ, start_response):
-        if 'request' in sys.argv or 'post' in sys.argv:
-            req = Request(environ)
-            try:
-                resp = req.get_response(django_app)
-            except Exception:
-                resp = Response(content_type='text/plain')
-                traceback.print_exc(file=resp.body_file)
-            return resp(environ, start_response)
-        return django_app(environ, start_response)
-
-    if 'no_error' not in conf:
-        app = EvalException(app, debug=True)
     if 'no_media' not in conf:
-        app = Cascade([app, MediaMap(settings)])
+        app = Cascade(app, MediaMap(settings))
+    else:
+        app = Cascade(app, None)
+    if 'no_error' not in conf:
+        app = backlash.DebuggedApplication(app)
     return app
 
 
 def main(*args, **kwargs):
     args = sys.argv
+    config = None
+    conf = {}
 
-    if 'help' in args:
-        pass
-    elif 'request' in args:
-        config = utils.get_config_file()
-        sys.argv[2:2] = [config]
-    elif 'post' in args:
-        config = utils.get_config_file()
-        sys.argv[2:2] = [config]
-    elif 'serve' not in args:
-        config = utils.get_config_file()
-        parser = OptionParser()
-        parser.add_option("-t", "--debug-toolbar", dest="toolbar",
-                          action="store_true", default=False)
-        parser.add_option("-i", "--non-interactive", dest="interactive",
-                          action="store_true", default=False)
-        parser.add_option("-m", "--no-media", dest="no_media",
-                          action="store_true", default=False)
-        options, args = parser.parse_args()
+    config = utils.get_config_file()
+    parser = OptionParser()
+    parser.add_option("-t", "--debug-toolbar", dest="toolbar",
+                      action="store_true", default=False)
+    parser.add_option("-i", "--non-interactive", dest="interactive",
+                      action="store_true", default=False)
+    parser.add_option("-m", "--no-media", dest="no_media",
+                      action="store_true", default=False)
+    parser.add_option("--host", dest="host",
+                      action="store", default="0.0.0.0")
+    parser.add_option("-p", "--port", dest="port",
+                      action="store", default="8000")
+    parser.add_option("--threads", dest="threads",
+                      action="store", default="2")
+    options, args = parser.parse_args()
 
-        if options.toolbar:
-            print('Including django-debug-toolbar')
-            sys.argv.append('toolbar=true')
+    if options.toolbar:
+        conf['toolbar'] = True
 
-        if options.interactive:
-            sys.argv.append('no_error=true')
+    if options.interactive:
+        conf['no_error'] = True
+
+    if options.no_media:
+        conf['no_media'] = True
+
+    if config is None:
+        config = utils.get_config_file()
+
+    if 'request' in args:
+        app = make_app({}, no_error=True)
+        req = webob.Request.blank(args[1])
+        try:
+            resp = req.get_response(app)
+        except:
+            raise
         else:
-            print('Including WebError middleware')
+            if resp.charset:
+                body = resp.text
+            else:
+                body = resp.body
+            if not isinstance(body, str):
+                body = body.decode('utf8')
+            print(body)
+    else:
+        config = utils.get_config_file()
+        app = make_app(conf)
+        from django.utils import autoreload
+        autoreload.main(serve, (app,), {
+            'expose_tracebacks': True,
+            'host': options.host,
+            'port': options.port,
+            'threads': options.threads,
+        })
+        return
 
-        if options.no_media:
-            print('Do not serve media files')
-            sys.argv.append('no_media=true')
 
-        sys.argv = [a for a in sys.argv if a not in ('-t', '-i', '-m')]
-        sys.argv[1:1] = ['serve', '--reload', config]
-    paste.script.command.run()
+def serve(app, **kwargs):
+    print('')
+    waitress.serve(app, **kwargs)

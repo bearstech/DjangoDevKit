@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-from ConfigParser import ConfigParser
-from paste.deploy import loadapp
 from djangodevkit import utils
 import sys
 import os
+
+try:
+    from ConfigParser import ConfigParser
+except ImportError:
+    from configparser import ConfigParser
 
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
@@ -17,8 +20,6 @@ def manage(*args):
         DEBUG_PROPAGATE_EXCEPTIONS=False)
     del settings.DEBUG
     from django.core import management
-    config = utils.get_config_file()
-    app = loadapp('config:%s' % config)  # NOQA
     if utils.get_version() < (1, 4):
         # django < 1.6
         def run(argv=None):
@@ -27,7 +28,6 @@ def manage(*args):
     else:
         def run(argv=None):
             return management.execute_from_command_line(argv=argv)
-    loadapp('config:%s' % config)
     if utils.get_version() < (1, 7):
         from django.conf import settings as sets  # NOQA
     args = args or sys.argv[1:]
@@ -52,17 +52,13 @@ def manage(*args):
 
 
 def manage_migrate():
-    manage('syncdb', '--noinput')
     if utils.get_version() >= (1, 7):
         manage('migrate', '--noinput')
     else:
+        manage('syncdb', '--noinput')
         from django.conf import settings
         if 'south' in settings.INSTALLED_APPS:
             manage('migrate', '--noinput')
-
-
-def manage_test():
-    manage('test')
 
 
 def manage_shell():
