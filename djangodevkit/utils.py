@@ -15,8 +15,10 @@ for p in sys.path:
 
 def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
     os.environ['DEVELOPMENT'] = '1'
-    settings = os.environ.get('DJANGO_SETTINGS_MODULE')
-    if settings in (None, 'settings', 'settings.py'):
+    env_mod_name = os.environ.get('DJANGO_SETTINGS_MODULE', 'settings')
+    try:
+        settings = __import__(env_mod_name, globals(), locals(), [''])
+    except ImportError:
         settings = ['settings.py']
         settings.extend(glob.glob(os.path.join('*', 'settings.py')))
         for filename in settings:
@@ -43,7 +45,7 @@ def get_settings(mod_name=None, apps=(), middlewares=(), **kw):
     settings.DEBUG_PROPAGATE_EXCEPTIONS = True
     settings.INSTALLED_APPS += tuple(apps)
     settings.MIDDLEWARE_CLASSES = \
-        tuple(middlewares) + tuple(settings.MIDDLEWARE_CLASSES)
+        tuple(middlewares) + tuple(getattr(settings, 'MIDDLEWARE_CLASSES', ()))
     settings.INTERNAL_IPS = ('127.0.0.1',)
     for k, v in kw.items():
         setattr(settings, k.upper(), v)
