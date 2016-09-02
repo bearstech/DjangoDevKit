@@ -2,4 +2,5 @@ include setup.py
 include README.rst
 include CHANGES.txt
 exclude docs
+exclude tox2travis.py
 recursive-include djangodevkit *.ini

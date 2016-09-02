@@ -1,7 +1,17 @@
-language: python
-python:
-- "2.7"
-install:
-    - pip install tox
-script: tox
 
+language: python
+python: 3.5
+
+sudo: false
+
+install:
+  - pip install tox
+script:
+  - tox
+env:
+  - TOXENV=py27
+  - TOXENV=py34
+  - TOXENV=py35
+  - TOXENV=py27-settings
+  - TOXENV=py34-settings
+  - TOXENV=py35-settings
