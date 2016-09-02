@@ -1,6 +1,7 @@
-include setup.py
-include README.rst
-include CHANGES.txt
-exclude docs
-exclude tox2travis.py
-recursive-include djangodevkit *.ini
+exclude .installed.cfg
+exclude .coveragerc
+graft docs
+graft djangodevkit
+include *.py *.rst *.cfg *.ini *.txt
+global-exclude *.pyc
+global-exclude __pycache__
