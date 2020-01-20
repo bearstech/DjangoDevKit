@@ -1,15 +1,16 @@
-
 language: python
-python: 3.5
 
-sudo: false
+matrix:
+  include:
+    - python: 3.5
+    - python: 3.7
 
 install:
-  - pip install tox
+  - pip install tox-travis coveralls
+
 script:
   - tox
-env:
-  - TOXENV=py35
-  - TOXENV=py37
-  - TOXENV=py35-settings
-  - TOXENV=py37-settings
+
+cache:
+  directories:
+    - $HOME/.cache/pip
