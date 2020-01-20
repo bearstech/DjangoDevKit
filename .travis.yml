@@ -9,9 +9,7 @@ install:
 script:
   - tox
 env:
-  - TOXENV=py27
-  - TOXENV=py34
   - TOXENV=py35
-  - TOXENV=py27-settings
-  - TOXENV=py34-settings
+  - TOXENV=py37
   - TOXENV=py35-settings
+  - TOXENV=py37-settings
