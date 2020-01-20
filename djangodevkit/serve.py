@@ -114,7 +114,7 @@ def main(*args, **kwargs):
         req = webob.Request.blank(args[1])
         try:
             resp = req.get_response(app)
-        except:
+        except Exception:
             raise
         else:
             if resp.charset:
@@ -128,12 +128,24 @@ def main(*args, **kwargs):
         config = utils.get_config_file()
         app = make_app(conf)
         from django.utils import autoreload
-        autoreload.main(serve, (app,), {
-            'expose_tracebacks': True,
-            'host': options.host,
-            'port': options.port,
-            'threads': options.threads,
-        })
+        main = getattr(autoreload, 'main', None)
+        if main is None:
+            # django >2.2
+            autoreload.run_with_reloader(
+                serve, app, **{
+                    'expose_tracebacks': True,
+                    'host': options.host,
+                    'port': options.port,
+                    'threads': options.threads,
+                })
+        else:
+            # django <2.2
+            main(serve, (app,), {
+                'expose_tracebacks': True,
+                'host': options.host,
+                'port': options.port,
+                'threads': options.threads,
+            })
         return
 
 

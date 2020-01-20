@@ -1,7 +1,7 @@
 1.0.8 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Django 2.2 compat
 
 
 1.0.7 (2016-09-02)

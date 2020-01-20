@@ -14,6 +14,7 @@ def read(*names):
         values[name] = value
     return values
 
+
 long_description = """
 %(README.rst)s
 
@@ -45,9 +46,8 @@ setup(name='DjangoDevKit',
           'License :: OSI Approved :: MIT License',
           'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
           'Operating System :: POSIX',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.3',
-          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.7',
       ],
       keywords='django',
       author='Gael Pasgrimaud',
